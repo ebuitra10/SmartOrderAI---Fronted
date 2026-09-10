@@ -1,0 +1,87 @@
+<div class="page-header">
+  <h2>Ordenes</h2>
+  <button class="btn-primary" (click)="openCreate()">+ Nueva orden</button>
+</div>
+
+<div class="error-msg" *ngIf="error">{{ error }}</div>
+<div class="success-msg" *ngIf="success">{{ success }}</div>
+<div class="loading" *ngIf="loading">Cargando...</div>
+
+<div class="table-container" *ngIf="!loading">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Tienda</th>
+        <th>Metodo de pago</th>
+        <th>Total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td><span class="id-badge">#{{ order.id }}</span></td>
+        <td>{{ order.date }}</td>
+        <td>{{ order.store }}</td>
+        <td><span class="payment-badge">{{ order.paymentMethod }}</span></td>
+        <td>{{ order.totalPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+        <td>
+          <button class="btn-delete" (click)="delete(order)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal nueva orden -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Nueva orden</h3>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" [(ngModel)]="form.date">
+      </div>
+      <div class="form-group">
+        <label>Metodo de pago</label>
+        <select [(ngModel)]="form.paymentMethod">
+          <option value="CASH">Efectivo</option>
+          <option value="CARD">Tarjeta</option>
+          <option value="TRANSFER">Transferencia</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Tienda</label>
+      <input type="text" [(ngModel)]="form.store" placeholder="Nombre de la tienda">
+    </div>
+
+    <div class="items-section">
+      <div class="items-header">
+        <label>Productos</label>
+        <button class="btn-add-item" (click)="addItem()">+ Agregar</button>
+      </div>
+
+      <div class="item-row" *ngFor="let item of items; let i = index">
+        <select [(ngModel)]="item.productCode" class="item-select">
+          <option value="">Selecciona un producto</option>
+          <option *ngFor="let p of products" [value]="p.productCode">
+            {{ p.productName }} ({{ p.productCode }})
+          </option>
+        </select>
+        <input type="number" [(ngModel)]="item.quantity" min="1" class="item-qty" placeholder="Cant.">
+        <button class="btn-remove-item" (click)="removeItem(i)" *ngIf="items.length > 1">x</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
+      <button class="btn-primary" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Crear orden' }}
+      </button>
+    </div>
+  </div>
+</div>

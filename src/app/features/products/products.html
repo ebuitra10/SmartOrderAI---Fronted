@@ -1,0 +1,102 @@
+<div class="page-header">
+  <h2>Productos</h2>
+  <button class="btn-primary" (click)="openCreate()">+ Nuevo producto</button>
+</div>
+
+<div class="error-msg" *ngIf="error">{{ error }}</div>
+
+<div class="loading" *ngIf="loading">Cargando...</div>
+
+<div class="table-container" *ngIf="!loading">
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products">
+        <td><span class="code-badge">{{ product.productCode }}</span></td>
+        <td>{{ product.productName }}</td>
+        <td>{{ product.price | currency:'COP':'symbol':'1.0-0' }}</td>
+        <td class="desc">{{ product.description }}</td>
+        <td>
+          <button class="btn-stock" (click)="openAddStock(product)">+ Stock</button>
+          <button class="btn-edit" (click)="openEdit(product)">Editar</button>
+          <button class="btn-delete" (click)="delete(product)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>{{ isEditing ? 'Editar producto' : 'Nuevo producto' }}</h3>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="form.productName" placeholder="Nombre del producto">
+    </div>
+    <div class="form-group">
+      <label>Código</label>
+      <input type="text" [(ngModel)]="form.productCode" placeholder="Ej: SX-1001" [disabled]="isEditing">
+    </div>
+    <div class="form-group">
+      <label>Precio</label>
+      <input type="number" [(ngModel)]="form.price" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea [(ngModel)]="form.description" placeholder="Descripción del producto"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
+      <button class="btn-primary" (click)="save()">{{ isEditing ? 'Actualizar' : 'Crear' }}</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-msg" *ngIf="success">{{ success }}</div>
+
+<!-- Modal añadir stock -->
+<div class="modal-overlay" *ngIf="showStockModal" (click)="closeStockModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Añadir cantidad</h3>
+    <p class="stock-product-name">{{ selectedProductName }} <span>({{ selectedProductCode }})</span></p>
+
+    <div class="form-group">
+      <label>Cantidad a agregar</label>
+      <input type="number" [(ngModel)]="stockQuantity" min="1" placeholder="0">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeStockModal()">Cancelar</button>
+      <button class="btn-primary" (click)="saveStock()">Añadir</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmar eliminación -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
+  <div class="modal modal-danger" (click)="$event.stopPropagation()">
+    <div class="danger-icon">⚠️</div>
+    <h3>Eliminar producto</h3>
+    <p class="danger-msg">
+      Estás a punto de eliminar <strong>{{ productToDelete?.productName }}</strong>.
+    </p>
+    <p class="danger-warning">
+      Esta acción también eliminará todo el registro de inventario asociado a este producto y no se puede deshacer.
+    </p>
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn-danger" (click)="confirmDelete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>

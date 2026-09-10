@@ -1,0 +1,41 @@
+<h1 style="color:red;font-size:48px">FUNCIONA</h1>
+
+<div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-name">SmartOrderAI</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/products" routerLinkActive="active" class="nav-item">
+        Productos
+      </a>
+      <a routerLink="/inventory" routerLinkActive="active" class="nav-item">
+        Inventario
+      </a>
+      <a routerLink="/orders" routerLinkActive="active" class="nav-item">
+        Ordenes
+      </a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">SmartOrderAI Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="user-role" [class.admin]="isAdmin">
+          {{ isAdmin ? 'Admin' : 'Usuario' }}
+        </span>
+        <span class="username">{{ username }}</span>
+        <button class="btn-logout" (click)="logout()">Cerrar sesion</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

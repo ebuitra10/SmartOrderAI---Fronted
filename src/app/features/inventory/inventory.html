@@ -1,0 +1,31 @@
+<div class="page-header">
+  <h2>Inventario</h2>
+</div>
+
+<div class="error-msg" *ngIf="error">{{ error }}</div>
+<div class="loading" *ngIf="loading">Cargando...</div>
+
+<div class="table-container" *ngIf="!loading">
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Stock</th>
+        <th>Precio unitario</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of inventory">
+        <td><span class="code-badge">{{ item.productCode }}</span></td>
+        <td><strong>{{ item.stockQuantity }}</strong> unidades</td>
+        <td>{{ item.unitPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+        <td>
+          <span class="status-badge" [ngClass]="getStockStatus(item.stockQuantity)">
+            {{ getStockLabel(item.stockQuantity) }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
