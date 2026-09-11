@@ -1,0 +1,133 @@
+<div class="page-header">
+  <h2>Analytics</h2>
+  <div class="header-actions">
+    <!-- Filtros de fecha estilizados -->
+    <div class="date-picker-wrapper">
+      <div class="date-field">
+        <label>Desde</label>
+        <div class="input-icon-group">
+          <input type="date" [(ngModel)]="startDate" (change)="onFilterChange()" />
+        </div>
+      </div>
+      <span class="date-separator">→</span>
+      <div class="date-field">
+        <label>Hasta</label>
+        <div class="input-icon-group">
+          <input type="date" [(ngModel)]="endDate" (change)="onFilterChange()" />
+        </div>
+      </div>
+    </div>
+
+    <span class="sync-success" *ngIf="syncSuccess">{{ syncSuccess }}</span>
+    <button class="btn-sync" (click)="syncData()" [disabled]="syncing">
+      {{ syncing ? 'Sincronizando...' : 'Sincronizar datos' }}
+    </button>
+    <button class="btn-refresh" (click)="loadAll()">Actualizar</button>
+  </div>
+</div>
+
+<div class="error-msg" *ngIf="error">{{ error }}</div>
+<div class="loading" *ngIf="loading">Cargando datos...</div>
+
+<ng-container *ngIf="!loading">
+  <!-- KPIs de inventario en tiempo real (removido *ngIf="inventorySummary" y grid duplicado) -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon blue">📦</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Total productos</span>
+        <span class="kpi-value">{{ totalProducts }}</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon green">💰</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Valor en inventario</span>
+        <span class="kpi-value">{{ formatCurrency(totalStockValue.toString()) }}</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon yellow">⚠️</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Stock bajo</span>
+        <span class="kpi-value">{{ productsLowStock }}</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon red">🚫</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Sin stock</span>
+        <span class="kpi-value">{{ productsOutOfStock }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reporte de ventas -->
+  <div class="section-grid" *ngIf="salesReport">
+    <div class="card">
+      <h3 class="card-title">Resumen de ventas</h3>
+      <div class="sales-stats">
+        <div class="stat-item">
+          <span class="stat-label">Revenue total</span>
+          <span class="stat-value green">{{ formatCurrency(salesReport.total_revenue) }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Unidades vendidas</span>
+          <span class="stat-value">{{ salesReport.total_units_sold }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total órdenes</span>
+          <span class="stat-value">{{ salesReport.total_orders }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Período</span>
+          <span class="stat-value small">
+            {{ salesReport.period_start }} → {{ salesReport.period_end }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas activas -->
+    <div class="card">
+      <h3 class="card-title">Alertas activas</h3>
+      <div class="alerts-list" *ngIf="alerts.length > 0">
+        <div
+          class="alert-item"
+          *ngFor="let alert of alerts"
+          [ngClass]="getAlertClass(alert.alert_type)"
+        >
+          <span class="alert-badge">{{ getAlertLabel(alert.alert_type) }}</span>
+          <span class="alert-msg">{{ alert.message }}</span>
+        </div>
+      </div>
+      <div class="no-alerts" *ngIf="alerts.length === 0">Sin alertas activas</div>
+    </div>
+  </div>
+
+  <!-- Top productos -->
+  <div class="card full-width" *ngIf="salesReport && salesReport.top_products.length > 0">
+    <h3 class="card-title">Top productos por ventas</h3>
+    <div class="top-products">
+      <div class="top-product-item" *ngFor="let product of salesReport.top_products">
+        <div class="rank-badge">#{{ product.rank }}</div>
+        <div class="product-info">
+          <span class="product-name">{{ product.product_name }}</span>
+          <span class="product-code">{{ product.product_code }}</span>
+        </div>
+        <div class="product-stats">
+          <span class="units">{{ product.total_units_sold }} uds</span>
+          <span class="revenue">{{ formatCurrency(product.total_revenue) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            [style.width.%]="
+              (product.total_units_sold / salesReport!.top_products[0].total_units_sold) * 100
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

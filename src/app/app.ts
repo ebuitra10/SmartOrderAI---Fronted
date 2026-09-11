@@ -18,6 +18,7 @@ import { NgIf } from '@angular/common';
           <a routerLink="/products" routerLinkActive="active" class="nav-item">Productos</a>
           <a routerLink="/inventory" routerLinkActive="active" class="nav-item">Inventario</a>
           <a routerLink="/orders" routerLinkActive="active" class="nav-item">Ordenes</a>
+          <a routerLink="/analytics" routerLinkActive="active" class="nav-item">Analytics</a>
         </nav>
       </aside>
       <div class="main">

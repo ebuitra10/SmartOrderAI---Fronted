@@ -1,0 +1,16 @@
+services:
+  smartorder-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartorder-dashboard
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+    networks:
+      - smartorder-network
+
+networks:
+  smartorder-network:
+    external: true
+    name: smartorderaiproject_smartorder-network

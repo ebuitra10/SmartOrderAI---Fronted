@@ -3,7 +3,7 @@ export const environment = {
   apiUrl: 'http://localhost:8080/api',
   analyticsUrl: 'http://localhost:8006/api/v1/analytics',
   keycloak: {
-    url: 'http://localhost:9090', // ajusta al puerto donde corre tu Keycloak
+    url: 'http://localhost:9090',
     realm: 'springboot-realm-smartorder-dev',
     clientId: 'spring-client-smart-order'
   }
